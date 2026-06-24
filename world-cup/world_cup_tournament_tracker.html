@@ -226,8 +226,8 @@ const THIRDS_POOLS={
 };
 
 let store={};
-async function loadStore(){try{const r=await window.storage.get('wc2026v4');store=r?JSON.parse(r.value):{};}catch{store={};}}
-async function saveStore(){try{await window.storage.set('wc2026v4',JSON.stringify(store));}catch{}}
+function loadStore(){try{const r=localStorage.getItem('wc2026v4');store=r?JSON.parse(r):{};console.log('Data loaded from browser storage');}catch{store={};}}
+function saveStore(){try{localStorage.setItem('wc2026v4',JSON.stringify(store));console.log('Data saved to browser storage');}catch{console.error('Failed to save data');}}
 
 function buildFixtures(teams){
   const res=[];
@@ -353,7 +353,7 @@ function renderFixturesPage(){
   });
 }
 async function saveAndUpdate(){
-  saveFixtures(curGK,curFx);await saveStore();renderAllGroups();
+  saveFixtures(curGK,curFx);saveStore();renderAllGroups();
   const btn=document.querySelector('#page-fixtures .btn.primary');
   btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Update standings',1500);
 }
@@ -523,6 +523,6 @@ function kmHTML(m,round,idx){
 
 function resetKO(){if(!confirm('Reset the knockout bracket?'))return;delete store.knockout;saveStore();kd=null;renderKnockoutPage();}
 
-async function init(){await loadStore();initSelects();renderAllGroups();renderFixturesPage();renderStandingsPage();}
+function init(){loadStore();initSelects();renderAllGroups();renderFixturesPage();renderStandingsPage();}
 init();
 </script>
